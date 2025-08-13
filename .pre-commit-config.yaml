@@ -1,0 +1,40 @@
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
+    hooks:
+    -   id: check-yaml
+    -   id: end-of-file-fixer
+    -   id: trailing-whitespace
+    #-   id: check-added-large-files
+    -   id: check-yaml
+    -   id: detect-private-key
+    -   id: requirements-txt-fixer
+-   repo: https://github.com/psf/black
+    rev: 22.10.0
+    hooks:
+    -   id: black
+        args: [--line-length, "99"]
+-   repo: https://github.com/PyCQA/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        args: ["--profile", "black", "--filter-files"]
+-   repo: https://github.com/hhatto/autopep8
+    rev: v2.1.0
+    hooks:
+      - id: autopep8
+        args: ["-i", "-aa", "-j", "5", "--ignore",
+        "E203,E402,E501,E711,E712,F401,F841,RST2,RST301",
+        "--max-line-length", "99"]
+-   repo: https://github.com/PyCQA/flake8
+    rev: 6.0.0
+    hooks:
+      - id: flake8
+        args:
+          [
+            "--extend-ignore",
+            "E203,E402,E501,F401,E711,E712,F841,RST2,RST301",
+            "--exclude",
+            "logs/*,data/*,notebooks/*,core/GPTUtils/*",
+          ]
+        additional_dependencies: [flake8-rst-docstrings==0.3.0]
