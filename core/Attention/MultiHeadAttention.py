@@ -3,16 +3,16 @@ import torch.nn as nn
 
 
 class MultiHeadAttention(nn.Module):
-    def __init__(self, d_in, d_out, context_length, n_heads, dropout=0.1):
+    def __init__(self, d_in, d_out, context_length, n_heads, dropout=0.1, qvk_bias=False):
         super().__init__()
         self.d_in = d_in
         self.d_out = d_out
         self.context_length = context_length
         self.n_heads = n_heads
         self.d_k = d_out // n_heads
-        self.Wq = nn.Linear(d_in, d_out)
-        self.Wk = nn.Linear(d_in, d_out)
-        self.Wv = nn.Linear(d_in, d_out)
+        self.Wq = nn.Linear(d_in, d_out, bias=qvk_bias)
+        self.Wk = nn.Linear(d_in, d_out, bias=qvk_bias)
+        self.Wv = nn.Linear(d_in, d_out, bias=qvk_bias)
         self.out = nn.Linear(d_out, d_out)
         self.dropout = nn.Dropout(dropout)
 
