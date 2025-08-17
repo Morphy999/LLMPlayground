@@ -15,7 +15,10 @@ class GPTTrainer:
         validation_loader,
         optimizer,
         device=None,
+        start_context: str = "Every effort moves you",
+        tokenizer=None,
     ):
+        self.start_context = start_context
         self.model = model
         self.train_loader = train_loader
         self.validation_loader = validation_loader
@@ -26,6 +29,7 @@ class GPTTrainer:
         self.eval_iter = eval_iter
         self.train_losses, self.val_losses, self.track_tokens_seen = [], [], []
         self.tokens_seen, self.global_step = 0, -1
+        self.tokenizer = tokenizer
 
     def compute_loss(self, logits, targets):
         return F.cross_entropy(logits.flatten(0, 1), targets.flatten())
@@ -66,7 +70,7 @@ class GPTTrainer:
                         f"Val loss {self.val_losses[-1]:.3f}"
                     )
 
-            self.generate_and_print_sample()
+            self.generate_and_print_sample(self.start_context)
 
         return self.train_losses, self.val_losses, self.track_tokens_seen
 
@@ -81,18 +85,20 @@ class GPTTrainer:
             train_loss += loss.item()
         return train_loss / self.eval_iter, val_loss / self.eval_iter
 
-    def generate_and_print_sample(self, start_context):
+    def generate_and_print_sample(self, start_context: str):
         self.model.eval()
         context_size = self.model.pos_emb_layer.weight.shape[0]
 
         encoded = text_to_token_ids(start_context, self.tokenizer).to(self.device)
+
+        encoded = encoded.unsqueeze(0)
 
         with torch.no_grad():
             token_ids = generate_text_simple(
                 model=self.model, idx=encoded, max_new_tokens=50, context_size=context_size
             )
 
-        decoded_text = token_ids_to_text(token_ids, self.tokenizer)
+        decoded_text = token_ids_to_text(token_ids.squeeze(0), self.tokenizer)
 
         print(decoded_text.replace("\n", " "))
 
