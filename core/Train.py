@@ -1,11 +1,7 @@
 import torch
 import torch.nn.functional as F
 
-from core.DataUtils.utils import (
-    generate_text_simple,
-    text_to_token_ids,
-    token_ids_to_text,
-)
+from .DataUtils.utils import generate_text_simple, text_to_token_ids, token_ids_to_text
 
 
 class GPTTrainer:

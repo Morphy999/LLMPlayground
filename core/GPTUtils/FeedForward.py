@@ -1,6 +1,6 @@
 import torch.nn as nn
 
-from core.GPTUtils.Gelu import Gelu
+from .Gelu import Gelu
 
 
 class FeedForward(nn.Module):
