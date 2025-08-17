@@ -77,6 +77,7 @@ class GPTTrainer:
     def evaluate_model(self):
         self.model.eval()
         print("Evaluating model...")
+
         with torch.no_grad():
             train_loss = self.calc_loss_loader(self.train_loader, self.eval_iter)
             val_loss = self.calc_loss_loader(self.validation_loader, self.eval_iter)
