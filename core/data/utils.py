@@ -36,3 +36,36 @@ def generate_text_simple(model, idx, max_new_tokens, context_size):
         )  # 6 passo, concatenando o indice do token mais provavel com o contexto
 
     return idx
+
+
+def generate_text(
+    model, idx, max_new_tokens, context_size, temperature=0.0, top_k=None, eos_id=None
+):
+    for _ in range(max_new_tokens):
+        idx_cond = idx[:, -context_size:]
+
+        with torch.no_grad():
+            logits = model(idx_cond)
+
+        logits = logits[:, -1, :]
+
+        if top_k is not None:
+            top_k_probs, _ = torch.topk(logits, top_k)
+            logits = torch.where(
+                logits < top_k_probs[:, -1], torch.tensor(float("-inf")).to(logits.device), logits
+            )
+
+        if temperature > 0.0:
+            logits /= temperature
+            probs = torch.softmax(logits, dim=-1)
+            idx_next = torch.multinomial(probs, num_samples=1)
+
+        else:
+            idx_next = torch.argmax(logits, dim=-1, keepdim=True)
+
+        if idx_next == eos_id:
+            break
+
+        idx = torch.cat((idx, idx_next), dim=1)
+
+    return idx

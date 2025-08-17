@@ -14,7 +14,7 @@ class GPTModel(nn.Module):
         self.dropout = nn.Dropout(cfg["dropout"])
         self.transformer_blocks = nn.ModuleList(
             [TransformerBlock(cfg) for _ in range(cfg["n_layers"])]
-        )  # 12 layers
+        )
         self.ln_f = LayerNorm(cfg["emb_dim"])
         self.out_head = nn.Linear(cfg["emb_dim"], cfg["vocab_size"], bias=False)
         self.apply(self._init_weights)
