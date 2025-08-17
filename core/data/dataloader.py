@@ -1,7 +1,7 @@
 import tiktoken
 from torch.utils.data import DataLoader
 
-from .gpt_dataset import GPTDataset
+from .dataset import GPTDataset
 
 
 def create_dataloader_v1(
