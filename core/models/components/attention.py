@@ -13,7 +13,7 @@ class MultiHeadAttention(nn.Module):
         self.Wq = nn.Linear(d_in, d_out, bias=qvk_bias)
         self.Wk = nn.Linear(d_in, d_out, bias=qvk_bias)
         self.Wv = nn.Linear(d_in, d_out, bias=qvk_bias)
-        self.out = nn.Linear(d_out, d_out)
+        self.out_proj = nn.Linear(d_out, d_out)
         self.dropout = nn.Dropout(dropout)
 
         self.register_buffer(
@@ -52,6 +52,6 @@ class MultiHeadAttention(nn.Module):
             batch_size, seq_len, self.d_out
         )  # (batch_size, seq_len, d_out)
 
-        context_vectors = self.out(context_vectors)
+        context_vectors = self.out_proj(context_vectors)
 
         return context_vectors  # (batch_size, seq_len, d_out)

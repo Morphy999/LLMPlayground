@@ -19,7 +19,7 @@ class LayerNorm(nn.Module):
     def forward(self, x):
         mean = x.mean(-1, keepdim=True)
         var = x.var(-1, keepdim=True, unbiased=False)
-        return self.gamma * (x - mean) / (var + self.eps).sqrt() + self.beta
+        return self.gamma * ((x - mean) / torch.sqrt(var + self.eps)) + self.beta
 
 
 class FeedForward(nn.Module):

@@ -9,12 +9,17 @@ class TransformerBlock(nn.Module):
         super().__init__()
 
         self.attn_layer = MultiHeadAttention(
-            cfg["emb_dim"], cfg["emb_dim"], cfg["context_length"], cfg["n_heads"], cfg["dropout"]
+            cfg["emb_dim"],
+            cfg["emb_dim"],
+            cfg["context_length"],
+            cfg["n_heads"],
+            cfg.get("dropout", 0.1),
+            cfg.get("qvk_bias", False),
         )
         self.ff_layer = FeedForward(cfg)
         self.norm_layer1 = LayerNorm(cfg["emb_dim"])
         self.norm_layer2 = LayerNorm(cfg["emb_dim"])
-        self.dropout = nn.Dropout(cfg["dropout"])
+        self.dropout = nn.Dropout(cfg.get("dropout", 0.1))
 
     def forward(self, x):
 

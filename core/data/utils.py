@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 
 
@@ -69,3 +70,75 @@ def generate_text(
         idx = torch.cat((idx, idx_next), dim=1)
 
     return idx
+
+
+def assign(left, right):
+    if left.shape != right.shape:
+        raise ValueError(f"Shape mismatch. Left: {left.shape}, " "Right: {right.shape}")
+    return torch.nn.Parameter(torch.tensor(right))
+
+
+def load_weights_into_gpt(gpt, params):
+    gpt.pos_emb_layer.weight = assign(gpt.pos_emb_layer.weight, params["wpe"])
+    gpt.emb_layer.weight = assign(gpt.emb_layer.weight, params["wte"])
+
+    for b in range(len(params["blocks"])):
+        q_w, k_w, v_w = np.split((params["blocks"][b]["attn"]["c_attn"])["w"], 3, axis=-1)
+        gpt.transformer_blocks[b].attn_layer.Wq.weight = assign(
+            gpt.transformer_blocks[b].attn_layer.Wq.weight, q_w.T
+        )
+        gpt.transformer_blocks[b].attn_layer.Wk.weight = assign(
+            gpt.transformer_blocks[b].attn_layer.Wk.weight, k_w.T
+        )
+        gpt.transformer_blocks[b].attn_layer.Wv.weight = assign(
+            gpt.transformer_blocks[b].attn_layer.Wv.weight, v_w.T
+        )
+        q_b, k_b, v_b = np.split((params["blocks"][b]["attn"]["c_attn"])["b"], 3, axis=-1)
+        gpt.transformer_blocks[b].attn_layer.Wq.bias = assign(
+            gpt.transformer_blocks[b].attn_layer.Wq.bias, q_b
+        )
+        gpt.transformer_blocks[b].attn_layer.Wk.bias = assign(
+            gpt.transformer_blocks[b].attn_layer.Wk.bias, k_b
+        )
+        gpt.transformer_blocks[b].attn_layer.Wv.bias = assign(
+            gpt.transformer_blocks[b].attn_layer.Wv.bias, v_b
+        )
+        gpt.transformer_blocks[b].attn_layer.out_proj.weight = assign(
+            gpt.transformer_blocks[b].attn_layer.out_proj.weight,
+            params["blocks"][b]["attn"]["c_proj"]["w"].T,
+        )
+
+        gpt.transformer_blocks[b].attn_layer.out_proj.bias = assign(
+            gpt.transformer_blocks[b].attn_layer.out_proj.bias,
+            params["blocks"][b]["attn"]["c_proj"]["b"],
+        )
+        gpt.transformer_blocks[b].ff_layer.fc1.weight = assign(
+            gpt.transformer_blocks[b].ff_layer.fc1.weight,
+            params["blocks"][b]["mlp"]["c_fc"]["w"].T,
+        )
+        gpt.transformer_blocks[b].ff_layer.fc1.bias = assign(
+            gpt.transformer_blocks[b].ff_layer.fc1.bias, params["blocks"][b]["mlp"]["c_fc"]["b"]
+        )
+        gpt.transformer_blocks[b].ff_layer.fc2.weight = assign(
+            gpt.transformer_blocks[b].ff_layer.fc2.weight,
+            params["blocks"][b]["mlp"]["c_proj"]["w"].T,
+        )
+        gpt.transformer_blocks[b].ff_layer.fc2.bias = assign(
+            gpt.transformer_blocks[b].ff_layer.fc2.bias, params["blocks"][b]["mlp"]["c_proj"]["b"]
+        )
+        gpt.transformer_blocks[b].norm_layer1.gamma = assign(
+            gpt.transformer_blocks[b].norm_layer1.gamma, params["blocks"][b]["ln_1"]["g"]
+        )
+        gpt.transformer_blocks[b].norm_layer1.beta = assign(
+            gpt.transformer_blocks[b].norm_layer1.beta, params["blocks"][b]["ln_1"]["b"]
+        )
+        gpt.transformer_blocks[b].norm_layer2.gamma = assign(
+            gpt.transformer_blocks[b].norm_layer2.gamma, params["blocks"][b]["ln_2"]["g"]
+        )
+        gpt.transformer_blocks[b].norm_layer2.beta = assign(
+            gpt.transformer_blocks[b].norm_layer2.beta, params["blocks"][b]["ln_2"]["b"]
+        )
+
+    gpt.ln_f.gamma = assign(gpt.ln_f.gamma, params["g"])
+    gpt.ln_f.beta = assign(gpt.ln_f.beta, params["b"])
+    gpt.out_head.weight = assign(gpt.out_head.weight, params["wte"])

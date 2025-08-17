@@ -11,7 +11,7 @@ class GPTModel(nn.Module):
 
         self.emb_layer = nn.Embedding(cfg["vocab_size"], cfg["emb_dim"])
         self.pos_emb_layer = nn.Embedding(cfg["context_length"], cfg["emb_dim"])
-        self.dropout = nn.Dropout(cfg["dropout"])
+        self.dropout = nn.Dropout(cfg.get("dropout", 0.1))
         self.transformer_blocks = nn.ModuleList(
             [TransformerBlock(cfg) for _ in range(cfg["n_layers"])]
         )
