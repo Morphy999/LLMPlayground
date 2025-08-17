@@ -36,7 +36,7 @@ class MultiHeadAttention(nn.Module):
         k = k.transpose(1, 2)  # (batch_size, n_heads, seq_len, d_k)
         v = v.transpose(1, 2)  # (batch_size, n_heads, seq_len, d_k)
 
-        attn_scores = q @ k.transpose(2, 3)  # (batch_size, n_heads, seq_len, seq_len)
+        attn_scores = q @ k.transpose(2, 3)  # (batch_size, n_heads, d_k, seq_len)
 
         attn_scores.masked_fill_(self.mask.bool()[:seq_len, :seq_len], -torch.inf)
 
