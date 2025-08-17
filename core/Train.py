@@ -76,14 +76,13 @@ class GPTTrainer:
 
     def evaluate_model(self):
         self.model.eval()
-        train_loss, val_loss = 0, 0
-        for i, (input_batch, target_batch) in enumerate(self.train_loader):
-            input_batch = input_batch.to(self.device)
-            target_batch = target_batch.to(self.device)
-            logits = self.model(input_batch)
-            loss = self.compute_loss(logits, target_batch)
-            train_loss += loss.item()
-        return train_loss / self.eval_iter, val_loss / self.eval_iter
+        print("Evaluating model...")
+        with torch.no_grad():
+            train_loss = self.calc_loss_loader(self.train_loader, self.eval_iter)
+            val_loss = self.calc_loss_loader(self.validation_loader, self.eval_iter)
+
+        self.model.train()
+        return train_loss, val_loss
 
     def generate_and_print_sample(self, start_context: str):
         self.model.eval()
