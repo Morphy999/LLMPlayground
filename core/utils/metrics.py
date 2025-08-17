@@ -4,8 +4,10 @@ Métricas para avaliação do modelo GPT
 
 from typing import Any, Dict, List, Tuple
 
+import matplotlib.pyplot as plt
 import numpy as np
 import torch
+from matplotlib.ticker import MaxNLocator
 
 
 def compute_loss_metrics(train_losses: List[float], val_losses: List[float]) -> Dict[str, float]:
@@ -92,33 +94,17 @@ def compute_metrics_batch(
     return metrics
 
 
-def plot_training_curves(
-    train_losses: List[float], val_losses: List[float], save_path: str = None
-) -> None:
-    """
-    Plota curvas de treinamento
+def plot_losses(epochs_seen, tokens_seen, train_losses, val_losses):
 
-    Args:
-        train_losses: Losses de treinamento
-        val_losses: Losses de validação
-        save_path: Caminho para salvar o gráfico
-    """
-    try:
-        import matplotlib.pyplot as plt
-
-        plt.figure(figsize=(10, 6))
-        plt.plot(train_losses, label="Training Loss", alpha=0.8)
-        plt.plot(val_losses, label="Validation Loss", alpha=0.8)
-        plt.xlabel("Evaluation Steps")
-        plt.ylabel("Loss")
-        plt.title("Training and Validation Loss")
-        plt.legend()
-        plt.grid(True, alpha=0.3)
-
-        if save_path:
-            plt.savefig(save_path, dpi=300, bbox_inches="tight")
-
-        plt.show()
-
-    except ImportError:
-        print("Matplotlib não está instalado. Instale com: pip install matplotlib")
+    fig, ax1 = plt.subplots(figsize=(5, 3))
+    ax1.plot(epochs_seen, train_losses, label="Training loss")
+    ax1.plot(epochs_seen, val_losses, linestyle="-.", label="Validation loss")
+    ax1.set_xlabel("Epochs")
+    ax1.set_ylabel("Loss")
+    ax1.legend(loc="upper right")
+    ax1.xaxis.set_major_locator(MaxNLocator(integer=True))
+    ax2 = ax1.twiny()
+    ax2.plot(tokens_seen, train_losses, alpha=0)
+    ax2.set_xlabel("Tokens seen")
+    fig.tight_layout()
+    plt.show()
