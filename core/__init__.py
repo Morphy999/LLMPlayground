@@ -4,7 +4,7 @@ Uma implementação educacional do modelo GPT em PyTorch
 """
 
 from .configs import GPT2_LARGE, GPT2_MEDIUM, GPT2_SMALL
-from .data import GPTDataLoader, GPTDataset, generate_text_simple
+from .data import GPTDataset, create_dataloader_v1, generate_text_simple
 
 # Imports principais
 from .models import GPTModel
@@ -22,7 +22,7 @@ __all__ = [
     "GPTTrainer",
     # Dados
     "GPTDataset",
-    "GPTDataLoader",
+    "create_dataloader_v1",
     "generate_text_simple",
     # Utilitários
     "GPTConfig",

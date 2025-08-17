@@ -10,18 +10,15 @@ from typing import Any, Dict, Optional
 class GPTConfig:
     """Configuração do modelo GPT"""
 
-    # Dimensões do modelo
     vocab_size: int = 50257
     emb_dim: int = 768
     context_length: int = 1024
     n_layers: int = 12
     n_heads: int = 12
 
-    # Hiperparâmetros
     dropout: float = 0.1
     layer_norm_eps: float = 1e-5
 
-    # Configurações de treinamento
     learning_rate: float = 3e-4
     weight_decay: float = 0.01
     warmup_steps: int = 1000
@@ -40,22 +37,18 @@ class GPTConfig:
 class TrainingConfig:
     """Configuração de treinamento"""
 
-    # Hiperparâmetros básicos
     batch_size: int = 32
     max_epochs: int = 100
     eval_freq: int = 100
     eval_iter: int = 10
 
-    # Otimização
     learning_rate: float = 3e-4
     weight_decay: float = 0.01
     warmup_steps: int = 1000
 
-    # Checkpointing
     save_freq: int = 1000
     checkpoint_dir: str = "checkpoints"
 
-    # Logging
     log_freq: int = 10
     use_tensorboard: bool = True
     use_wandb: bool = False

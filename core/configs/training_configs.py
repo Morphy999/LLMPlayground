@@ -4,7 +4,6 @@ Configurações de treinamento pré-definidas
 
 from ..utils.config import TrainingConfig
 
-# Configuração padrão de treinamento
 DEFAULT_TRAINING_CONFIG = TrainingConfig(
     batch_size=32,
     max_epochs=100,
@@ -20,7 +19,7 @@ DEFAULT_TRAINING_CONFIG = TrainingConfig(
     use_wandb=False,
 )
 
-# Configuração para treinamento rápido (testes)
+
 FAST_TRAINING_CONFIG = TrainingConfig(
     batch_size=16,
     max_epochs=10,
@@ -36,7 +35,6 @@ FAST_TRAINING_CONFIG = TrainingConfig(
     use_wandb=False,
 )
 
-# Configuração para treinamento longo (produção)
 PRODUCTION_TRAINING_CONFIG = TrainingConfig(
     batch_size=64,
     max_epochs=1000,
@@ -52,7 +50,6 @@ PRODUCTION_TRAINING_CONFIG = TrainingConfig(
     use_wandb=True,
 )
 
-# Configuração para fine-tuning
 FINE_TUNING_CONFIG = TrainingConfig(
     batch_size=8,
     max_epochs=50,
@@ -68,7 +65,6 @@ FINE_TUNING_CONFIG = TrainingConfig(
     use_wandb=False,
 )
 
-# Dicionário de todas as configurações de treinamento
 ALL_TRAINING_CONFIGS = {
     "default": DEFAULT_TRAINING_CONFIG,
     "fast": FAST_TRAINING_CONFIG,
