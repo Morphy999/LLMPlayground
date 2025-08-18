@@ -1,7 +1,7 @@
 import tiktoken
 from torch.utils.data import DataLoader
 
-from .dataset import GPTDataset
+from .dataset import GPTDataset, SMSDataset
 
 
 def create_dataloader_v1(
@@ -11,6 +11,19 @@ def create_dataloader_v1(
     tokenizer = tiktoken.get_encoding("gpt2")
 
     dataset = GPTDataset(txt, tokenizer, max_length, stride)
+
+    dataloader = DataLoader(
+        dataset,
+        batch_size=batch_size,
+        shuffle=shuffle,
+        drop_last=drop_last,
+        num_workers=num_workers,
+    )
+
+    return dataloader
+
+
+def create_dataloader_sms(dataset, batch_size, shuffle=True, drop_last=True, num_workers=0):
 
     dataloader = DataLoader(
         dataset,
